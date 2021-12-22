@@ -1,0 +1,18 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="seasons.Season.__prize_fond" />
+          <option value="seasons.Season.__number_of_players" />
+          <option value="seasons.Season.*" />
+          <option value="tournaments.Tournament.*" />
+          <option value="tours.Tours.*" />
+          <option value="tables.Tables.*" />
+          <option value="operations.Operations.*" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
