@@ -7,6 +7,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 from sqlController import SQLighter
 import magic
+import json
 from datetime import datetime
 
 # set level logging
@@ -15,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 # Initialize bot with database(sqlite)
 bot = Bot(token=config.API_TOKEN)
 dp = Dispatcher(bot)
-db = SQLighter('clientdb.db')
+db = SQLighter('database.db')
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -41,14 +42,14 @@ count_uncrease = []
 async def main(wait_for):
     url = "wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker"
     async with websockets.connect(url) as client:
-        # data = json.loads(await client.recv())['data']
-        data = client.recv()['data']
+        data = json.loads(await client.recv())['data']
+        #data = client.recv()['data']
 
         start_sum = float(data['c'])
         time_now = int(time.time())
         count = 0
         while True:
-            data = client.recv()['data']
+            data = json.loads(await client.recv())['data']
 
             event_time = time.localtime(data['E'] // 1000)
             event_time = f"{event_time.tm_hour}:{event_time.tm_min}:{event_time.tm_sec}"
@@ -58,11 +59,10 @@ async def main(wait_for):
             # check time
             a = int(time.time() - time_now)
             if a % 1 == 0:
-                print(count)
                 count += 1
 
             current_sum = float(data['c'])
-            if current_sum >= start_sum and count < 10:
+            if current_sum >= start_sum + 2 and count < 10:
                 start_sum = float(data['c'])
                 count = 0
 
@@ -74,7 +74,7 @@ async def main(wait_for):
                         photo=open(magic.get_photo(), 'rb'),
                         caption="Buy!!! Increase bitcoin",
                         disable_notification=True)
-            elif current_sum < start_sum and count < 10:
+            elif current_sum < start_sum - 2 and count < 10:
                 start_sum = float(data['c'])
                 count = 0
 

@@ -2,7 +2,6 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import pandas_datareader as web
 
-
 def get_photo():
     plt.style.use('dark_background')
 
