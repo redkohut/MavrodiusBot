@@ -206,7 +206,7 @@ async def checking_info(wait_for):
 
 
 async def send_signal(type_sign):
-    """This function send buy/sell signals only for subscribers which consist in database"""
+    """ This function send buy/sell signals only for subscribers which consist in database"""
     new = GetPhotoTrade('bitcoin', '2')
     new.set_photo()
     subscriptions = db.get_subscriptions()
