@@ -19,4 +19,3 @@ class CryptoInfo:
     @property
     def price_crypto(self):
         return self.__price_crypto
-

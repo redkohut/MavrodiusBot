@@ -31,7 +31,6 @@ async def checking_info(wait_for):
     async with websockets.connect(url) as client:
         data = json.loads(await client.recv())['data']
         start_sum = float(data['c'])
-        time_now = int(time.time())
         while True:
             await asyncio.sleep(wait_for)
             data = json.loads(await client.recv())['data']
@@ -185,7 +184,3 @@ async def bot_message(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
-
-
-
-
