@@ -1,57 +1,89 @@
-import datetime as dt
 import matplotlib.pyplot as plt
-import pandas_datareader as web
+import requests
+import pandas as pd
+import datetime
 
-def get_photo():
-    plt.style.use('dark_background')
 
-    ma_1 = 30
-    ma_2 = 100
+class GetPhotoTrade:
+    """
+    -------------------------------------------------------
+    This class represents the process of obtaining an image
+    that describes the situation of bitcoin in real time
+    ------------------------------------------------------
+    __data_x - list of time checking trading data
+    __data_y - list of values of price
+    __url - string value which contains websockets for parsing
+    """
+    __data_x = []
+    __data_y = []
+    __url = f'https://api.coingecko.com//api//v3/coins/'
 
-    start = dt.datetime.now() - dt.timedelta(days=50)
-    end = dt.datetime.now()
+    def __init__(self, cryptocurrency, interval):
+        plt.style.use('dark_background')
+        self.crypto_name = cryptocurrency
+        self.market_info = self.get_market_chart(cryptocurrency, 'eur', interval)
+        self.set_photo()
 
-    data = web.DataReader('BTC', 'yahoo', start, end)
-    data['SMA_5'] = data['Adj Close'].rolling(5).mean()
-    data['SMA_20'] = data['Adj Close'].rolling(20).mean()
+    def set_photo(self):
+        plt.style.use('dark_background')
+        if self.crypto_name == 'bitcoin':
+            self.market_info.plot(y='price', x='timestamp', color='#ff8000')
+        elif self.crypto_name == 'cardano':
+            self.market_info.plot(y='price', x='timestamp', color='#4285f4')
+        elif self.crypto_name == 'ethereum':
+            self.market_info.plot(y='price', x='timestamp', color='#ffff00')
+        elif self.crypto_name == 'solana':
+            self.market_info.plot(y='price', x='timestamp', color='#7fffd4')
 
-    data = data.iloc[20:]
+        plt.savefig('output.png')
 
-    buy_signals = []
-    sell_signals = []
+    def availiable_crypto(self):
+        url = f'https://api.coingecko.com/api/v3/coins'
+        response = requests.get(url)
+        data = response.json()
 
-    trigger = 0
-    debil_buy = dt.datetime.now()
-    debil_sell = dt.datetime.now()
+        crypto_ids = []
 
-    for x in (range(len(data))):
-        if data['SMA_5'].iloc[x] > data['SMA_20'].iloc[x] and trigger != 1:
-            buy_signals.append(data['Adj Close'].iloc[x])
-            sell_signals.append(float('nan'))
-            debil_buy = data['Adj Close'].iloc[x]
-            trigger = 1
+        for asset in data:
+            crypto_ids.append(asset['id'])
 
-        elif data['SMA_5'].iloc[x] < data['SMA_20'].iloc[x] and trigger != -1:
-            buy_signals.append(float('nan'))
-            sell_signals.append(data['Adj Close'].iloc[x])
-            trigger = -1
-            debil_sell = data['Adj Close'].iloc[x]
+        return crypto_ids
 
+    def get_market_chart(self, coind_id='bitcoin', vs_currency='eur', days='max', interval='daily'):
+        crypto_ids = self.availiable_crypto()
+        if coind_id in crypto_ids:
+            url = f'https://api.coingecko.com//api//v3/coins/{coind_id}/market_chart'
+            payload = {'vs_currency': vs_currency,
+                       'days': days,
+                       'interval': interval
+                       }
+            response = requests.get(url, params=payload)
+            data = response.json()
+
+            timesmap_list = []
+            price_list = []
+
+            for price in data['prices']:
+                timesmap_list.append(datetime.datetime.fromtimestamp(price[0] // 1000))
+                price_list.append(price[1])
+
+            raw_data = {
+                'timestamp': timesmap_list,
+                'price': price_list
+            }
+
+            df = pd.DataFrame(raw_data)
+            return df
         else:
-            buy_signals.append(float('nan'))
-            sell_signals.append(float('nan'))
+            print('The crypto is not availiable')
 
-    data['Buy Signals'] = buy_signals
-    data['Sell Signals'] = sell_signals
 
-    plt.plot(data['Adj Close'], label='Share Price', alpha=0.5)
-    plt.plot(data['SMA_5'], label='SMA_5', color='orange', linestyle="--")
-    plt.plot(data['SMA_20'], label='SMA_20', color='pink', linestyle="--")
-    plt.scatter(data.index, data['Buy Signals'], label="Buy Signal", marker="^", color="#00ff00", lw=3)
-    plt.scatter(data.index, data['Sell Signals'], label="Sell Signal", marker="v", color="#ff0000", lw=3)
+    # new = GetPhotoTrade('cardano', '30')
+    # new.set_photo()
 
-    plt.legend(loc="upper left")
-    plt.savefig('output.png')
-    return 'output.png'
+
+
+
+
 
 
