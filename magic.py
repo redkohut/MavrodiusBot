@@ -46,7 +46,7 @@ class GetPhotoTrade:
 
         return crypto_ids
 
-    def get_market_chart(self, coind_id='bitcoin', vs_currency='eur', days='max', interval='daily'):
+    def get_market_chart(self, coint_id='bitcoin', vs_currency='eur', days='max', interval='daily'):
         crypto_ids = self.availiable_crypto()
         if coind_id in crypto_ids:
             url = f'https://api.coingecko.com//api//v3/coins/{coind_id}/market_chart'
