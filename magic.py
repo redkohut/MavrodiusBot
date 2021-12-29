@@ -14,8 +14,6 @@ class GetPhotoTrade:
     __data_y - list of values of price
     __url - string value which contains websockets for parsing
     """
-    __data_x = []
-    __data_y = []
     __url = f'https://api.coingecko.com//api//v3/coins/'
 
     def __init__(self, cryptocurrency, interval):
