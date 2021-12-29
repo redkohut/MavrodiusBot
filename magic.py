@@ -37,7 +37,8 @@ class GetPhotoTrade:
 
         plt.savefig('output.png')
 
-    def availiable_crypto(self):
+    @staticmethod
+    def availiable_crypto():
         url = f'https://api.coingecko.com/api/v3/coins'
         response = requests.get(url)
         data = response.json()

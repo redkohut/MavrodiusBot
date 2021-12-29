@@ -1,8 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 # --------Back button -----------
-from main import subscribe
-
 btn_back_to_main = KeyboardButton('👀 Menu')
 
 # --------Main menu---------
