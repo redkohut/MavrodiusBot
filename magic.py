@@ -10,8 +10,6 @@ class GetPhotoTrade:
     This class represents the process of obtaining an image
     that describes the situation of bitcoin in real time
     ------------------------------------------------------
-    __data_x - list of time checking trading data
-    __data_y - list of values of price
     __url - string value which contains websockets for parsing
     """
     __url = f'https://api.coingecko.com//api//v3/coins/'
