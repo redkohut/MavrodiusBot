@@ -32,8 +32,6 @@ async def checking_info(wait_for):
         data = json.loads(await client.recv())['data']
         start_sum = float(data['c'])
         time_now = int(time.time())
-        count = 0
-        a = 0
         while True:
             await asyncio.sleep(wait_for)
             data = json.loads(await client.recv())['data']
@@ -42,11 +40,9 @@ async def checking_info(wait_for):
 
             xdata.append(event_time)
             ydata.append(int(float(data['c'])))
-            # check time
-            a = int(time.time() - time_now)
-            print(a)
 
             current_sum = float(data['c'])
+
             if current_sum >= start_sum + 1:
                 start_sum = float(data['c'])
                 await send_signal('Buy')
@@ -83,20 +79,20 @@ async def subscribe(message: types.Message):
         db.update_subscription(message.from_user.id, True)
 
     await message.answer(
-        "Вы успешно подписались на рассылку!\nЖдите, скоро выйдут новые обзоры и вы узнаете о них первыми =)")
+        'You have successfully subscribed to the mailing list!\n '
+        'Wait, new reviews will come out soon and you will be the first to know about them =)')
 
 
-# Команда отписки
 @dp.message_handler(commands=['unsubscribe'])
 async def unsubscribe(message: types.Message):
     if not db.subscriber_exists(message.from_user.id):
         # if the user is not in the database, add negative status
         db.add_subscriber(message.from_user.id, False)
-        await message.answer("Вы итак не подписаны.")
+        await message.answer('You are not subscribed anyway.')
     else:
         # if it already have, we just update his negative status
         db.update_subscription(message.from_user.id, False)
-        await message.answer("Вы успешно отписаны от рассылки.")
+        await message.answer('You have successfully unsubscribed from the mailing list.')
 
 
 @dp.message_handler()
